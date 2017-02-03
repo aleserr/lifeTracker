@@ -1,6 +1,12 @@
 angular.module('goalController', [])
 .controller('goalCtrl', function($scope, $http, Goals) {
   Goals.get().success(function(data) {
+    for (var currentIndex=0; currentIndex<data.length; currentIndex=currentIndex+1) {
+      var currentElement = data[currentIndex];
+      currentElement.ok = currentIndex;
+      currentElement.ko = 1;
+      currentElement.percentage = (currentElement.ok/(currentElement.ok+currentElement.ko))*100;
+    }
     $scope.goals = data;
   });
   $scope.addGoal = function() {
@@ -9,7 +15,10 @@ angular.module('goalController', [])
       description: $scope.goalName
     };
     Goals.create(goalObject).success(function(data) {
-      $scope.goals.push(goalObject);
+      data.percentage = 0;
+      //goalObject._id = data._id;
+      //$scope.goals.push(goalObject);
+        $scope.goals.push(data);
       $scope.goalName = '';
     });
   };
